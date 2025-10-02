@@ -1,7 +1,7 @@
 import asyncio
 from agents import Agent,Runner,AsyncOpenAI,OpenAIChatCompletionsModel, function_tool
 import os
-# from agents.model_settings import ModelSettings
+from agents.model_settings import ModelSettings
 from dotenv import load_dotenv
 from agents import RunConfig
 from agents import enable_verbose_stdout_logging
@@ -30,17 +30,20 @@ config = RunConfig(
     model_provider= external_provider,
     model = model,
     tracing_disabled= True,
-    # workflow_name="Run_Streamed",
-    # model_settings=ModelSettings(
-    #     temperature=0.7,
-    #     top_p=0.9,
-    #     top_k=40,
-    #     max_output_tokens=150
-    # )
+    workflow_name="Run_Streamed",
+    model_settings=ModelSettings(
+        temperature=0.7,
+        top_p=0.9,
+        top_k=40,
+        max_output_tokens=150
+    )
 )
 
 @function_tool
-def get_weather(city:str) ->str:
+async def get_weather(city:str) ->str:
+    print("\nBefore Sleep\n")
+    await asyncio.sleep(5)
+    print("\nAwake Up\n")
     return f"The weather in {city} is sunny."
 
 
