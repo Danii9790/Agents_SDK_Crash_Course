@@ -26,23 +26,24 @@ def get_weather(city : str) -> str :
     return f"The weather in {city} is sunny"
 
 @function_tool
-def get_news(topic : str) -> str:
-    return f"The news about {topic} is that it is good"
+def get_support_details(city : str) -> str:
+    return f"The Support detail for {city} is 9231737621 "
 
 agent = Agent(
     name = "Weather and News Agent",
     instructions="Always reponsed in Haiku form",
     model = model,
-    tools=[get_weather,get_news],
-    # model_settings=ModelSettings(
-    #     temperature=0.7,
-    #     tool_choice="auto",
-    # ),
-    # tool_use_behavior
-    tool_use_behavior=StopAtTools(stop_at_tool_names=["get_news"])
+    tools=[get_weather,get_support_details],
+    model_settings=ModelSettings(
+        # temperature=0.7,
+        # tool_choice="none",
+        parallel_tool_calls=False
+    ),
+    # reset_tool_choice=False
+    # tool_use_behavior=StopAtTools(stop_at_tool_names=["get_news"])
 
 )
 
-result = Runner.run_sync(agent,"What is the weather in karachi and also share the news about karachi city.")
+result = Runner.run_sync(agent,"What is the weather in karachi and what is the support detail.",max_turns=2)
 
 print(result.final_output)
