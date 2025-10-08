@@ -1,9 +1,8 @@
-from gettext import find
-from turtle import mode
 from agents import Agent,Runner,AsyncOpenAI,OpenAIChatCompletionsModel, StopAtTools,function_tool,ModelSettings
 from agents.run import RunConfig
 import os
 from dotenv import load_dotenv
+from agents.agent import StopAtTools
 
 
 load_dotenv()
@@ -32,18 +31,18 @@ def get_news(topic : str) -> str:
 
 agent = Agent(
     name = "Weather and News Agent",
-    instructions="Always reponsed in graceful and polite manner",
+    instructions="Always reponsed in Haiku form",
     model = model,
     tools=[get_weather,get_news],
-    model_settings=ModelSettings(
-        temperature=0.7,
-        tool_choice="auto",
-    ),
+    # model_settings=ModelSettings(
+    #     temperature=0.7,
+    #     tool_choice="auto",
+    # ),
     # tool_use_behavior
-    reset_tool_choice=False
+    tool_use_behavior=StopAtTools(stop_at_tool_names=["get_news"])
 
 )
 
-result = Runner.run_sync(agent,"What is the weather in karachi and also share the news about karachi city.",max_turns=2)
+result = Runner.run_sync(agent,"What is the weather in karachi and also share the news about karachi city.")
 
 print(result.final_output)
