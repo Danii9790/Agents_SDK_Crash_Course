@@ -1,4 +1,4 @@
-from agents import Agent,Runner,AsyncOpenAI,OpenAIChatCompletionsModel, StopAtTools,function_tool,ModelSettings
+from agents import Agent,Runner,AsyncOpenAI,OpenAIChatCompletionsModel, StopAtTools,function_tool,ModelSettings,RunContextWrapper
 from agents.run import RunConfig
 import os
 from dotenv import load_dotenv
@@ -20,19 +20,26 @@ model = OpenAIChatCompletionsModel(
 )
 
 
-def get_system_prompt(context,agent):
-    print("[\ncontext]",context)
-    print("[\nagent]",agent)
-    return f"You are helpful assistant that can answer questions and help with tasks."
+# def get_system_prompt(context:RunContextWrapper,agent:Agent):
+#     print("[\ncontext]",context.context)
+#     print("[\nagent]",agent)
+#     return f"You are helpful assistant that can answer questions and help with tasks."
 
+
+# @function_tool(is_enabled=False)
+@function_tool
+def get_weather(city : str) -> str:
+    return f"the weather in {city} is sunny."
 agent = Agent(
     name = "Weather and News Agent",
-    instructions=get_system_prompt,
+    instructions="You are a helpful Assistant",
     model = model,
-  
-
+    tools=[get_weather],
+    model_settings=ModelSettings(
+        tool_choice="none"
+    )
 )
 
-result = Runner.run_sync(agent,"Hi")
+result = Runner.run_sync(agent,"What is the Weather in karachi?")
 
 print(result.final_output)
