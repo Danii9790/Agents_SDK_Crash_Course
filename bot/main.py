@@ -35,8 +35,7 @@ async def create_agent():
 
     config = RunConfig(
         model=model,
-        model_provider=provider,
-        tracing_disabled=True
+        model_provider=provider
     )
 
     @function_tool("get_menu")
@@ -87,20 +86,17 @@ def send_whatsapp_message(to, text):
 @app.post("/webhook")
 async def webhook(request: Request):
     payload = await request.json()
-    # WhatsApp messages come inside payload['entry'][0]['changes'][0]['value']['messages']
     try:
         messages = payload['entry'][0]['changes'][0]['value'].get('messages', [])
         if not messages:
             return JSONResponse(content={"status": "no messages"})
 
-        # Get sender number and message text
         sender = messages[0]['from']
         text = messages[0]['text']['body']
 
         # Run Agent SDK
         agent, config = await create_agent()
-        loop = asyncio.get_event_loop()
-        agent_response = loop.run_until_complete(Runner.run(agent, input=text, run_config=config))
+        agent_response = await Runner.run(agent, input=text, run_config=config)  # <-- fix here
         reply_text = getattr(agent_response, "final_output", None) or str(agent_response)
 
         # Send response back to user
