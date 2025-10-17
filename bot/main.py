@@ -71,13 +71,20 @@ def send_whatsapp_message(to, text):
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
         "Content-Type": "application/json"
     }
+
+    # WhatsApp number should not contain '+'
+    if to.startswith('+'):
+        to = to.replace('+', '')
+
     data = {
         "messaging_product": "whatsapp",
         "to": to,
         "type": "text",
         "text": {"body": text}
     }
+
     response = requests.post(url, headers=headers, json=data)
+    print("🔹 WhatsApp API response:", response.status_code, response.text)
     return response.json()
 
 # ---------------------------

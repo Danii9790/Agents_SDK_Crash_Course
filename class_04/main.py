@@ -1,3 +1,5 @@
+# Orchestration Using Code.
+
 from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
@@ -17,7 +19,7 @@ provider = AsyncOpenAI(
     )
 
 model = OpenAIChatCompletionsModel(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         openai_client=provider
     )
 
@@ -59,7 +61,9 @@ async def main():
             )
         
             input_items = story_outline_result.to_input_list()
-            latest_outline = ItemHelpers.text_message_output(story_outline_result.new_items)
+            # latest_outline = ItemHelpers.text_message_output(story_outline_result.new_items)
+            latest_outline = ItemHelpers.text_message_output(story_outline_result.new_items[0])
+
             print("Story outline Generator")
 
             evaluator_result = await Runner.run(evaluator,input_items)
