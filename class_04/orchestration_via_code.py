@@ -41,16 +41,16 @@ class EvaluationFeedback:
 
 evaluator = Agent[None](
     name  = "Evalutor",
-    instructions="""
-    1. You evaluate the story outline and decide if it's good enough.
-    2. If it's not good enough ,You provide feedback on what needs to be improved.
-    3. Attempt 3 time then responsed the user.
-    """,
+    instructions=(
+        "You evaluate a story outline and decide if it's good enough. "
+        "If it's not good enough, you provide feedback on what needs to be improved. "
+        "Never give it a pass on the first try. After 5 attempts, you can give it a pass if the story outline is good enough - do not go for perfection"
+    ),
     output_type=EvaluationFeedback
 )
 
 async def main():
-    msg = input("What Kind of story would yoou like to hear?")
+    msg = input("What Kind of story would you like to hear? : ")
     input_items : List[TResponseInputItem] = [{"content":msg,"role": "user"}]
     latest_outline : str | None = None
 
